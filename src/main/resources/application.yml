@@ -15,6 +15,8 @@ mybatis-plus:
   # mapper 映射文件的路径，可以有多个
   mapper-locations:
     - "classpath*:mappers/**/*.xml"
+  configuration:
+    map-underscore-to-camel-case: false
 
 server:
   port: 8080
