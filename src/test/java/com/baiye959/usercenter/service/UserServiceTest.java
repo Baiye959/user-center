@@ -35,4 +35,55 @@ class UserServiceTest {
         System.out.println(user.getId());
         Assertions.assertTrue(result);
     }
+
+    @Test
+    void userRegister() {
+        // 非空
+        String userAccount = "";
+        String userPassword = "12345678";
+        String checkPassword = "12345678";
+        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        userAccount = "userAcount1";
+        userPassword = "";
+        checkPassword = "12345678";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        userAccount = "userAcount1";
+        userPassword = "12345678";
+        checkPassword = "";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        // 长度
+        userAccount = "user1";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        userAccount = "userAccount1";
+        userPassword = "1234567";
+        checkPassword = "1234567";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        // 账户不包含特殊字符
+        userAccount = "user Account1";
+        userPassword = "12345678";
+        checkPassword = "12345678";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        // 校验密码和密码相同
+        userAccount = "userAccount1";
+        userPassword = "12345678";
+        checkPassword = "12345679";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        // 账户不重复
+        userAccount = "Baiye959";
+        userPassword = "12345678";
+        checkPassword = "12345678";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertEquals(-1, result);
+        // 成功
+        userAccount = "userAccount1";
+        result = userService.userRegister(userAccount, userPassword, checkPassword);
+        Assertions.assertTrue(result > 0);
+    }
 }
