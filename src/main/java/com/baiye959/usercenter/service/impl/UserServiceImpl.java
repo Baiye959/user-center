@@ -1,14 +1,14 @@
 package com.baiye959.usercenter.service.impl;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import java.security.MessageDigest;
-import java.util.Objects;
 import com.baiye959.usercenter.model.domain.User;
 import com.baiye959.usercenter.service.UserService;
 import com.baiye959.usercenter.mapper.UserMapper;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * 盐值，混淆密码
      */
     private static final String SALT = "baiye959";
+    /**
+     * 用户登录态键
+     */
+    private static final String USER_LOGIN_STATE = "userLoginState";
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -80,7 +84,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public User doLogin(String userAccount, String userPassword) {
+    public User doLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
         // 均不为空
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
@@ -100,10 +104,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
 
-        // 2. 加密
+        // 2. 密码是否正确
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
-        // 3. 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         queryWrapper.eq("userPassword", encryptPassword);
@@ -112,7 +115,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.info("user login failed, userAccount or userPassword cannot match");
             return null;
         }
-        return user;
+
+        // 3. 用户脱敏
+        User safetyUser = new User();
+        safetyUser.setId(user.getId());
+        safetyUser.setUsername(user.getUsername());
+        safetyUser.setUseraccount(user.getUseraccount());
+        safetyUser.setAvatarurl(user.getAvatarurl());
+        safetyUser.setGender(user.getGender());
+        safetyUser.setPhone(user.getPhone());
+        safetyUser.setEmail(user.getEmail());
+        safetyUser.setUserstatus(user.getUserstatus());
+        safetyUser.setCreatetime(user.getCreatetime());
+
+        // 4. 记录用户的登录态
+        request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
+
+        // 5. 返回脱敏后的用户信息
+        return safetyUser;
     }
 }
 
