@@ -9,6 +9,7 @@ import com.baiye959.usercenter.model.domain.User;
 import com.baiye959.usercenter.service.UserService;
 import com.baiye959.usercenter.mapper.UserMapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -22,12 +23,16 @@ import java.util.regex.Pattern;
 * @createDate 2024-04-17 18:59:48
 */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
 
     @Resource
     private UserMapper userMapper;
-
+    /**
+     * 盐值，混淆密码
+     */
+    private static final String SALT = "baiye959";
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -61,7 +66,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         // 2. 加密
-        final String SALT = "baiye959";
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
 
         // 3. 插入
@@ -73,6 +77,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return -1;
         }
         return user.getId();
+    }
+
+    @Override
+    public User doLogin(String userAccount, String userPassword) {
+        // 1. 校验
+        // 均不为空
+        if (StringUtils.isAnyBlank(userAccount, userPassword)) {
+            return null;
+        }
+        // 长度校验
+        if (userAccount.length() < 4) {
+            return null;
+        }
+        if (userPassword.length() < 8) {
+            return null;
+        }
+        // 账户不能包含特殊字符
+        String validPattern = "\\pP|\\pS|\\s+";
+        Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
+        if (matcher.find()) {
+            return null;
+        }
+
+        // 2. 加密
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+
+        // 3. 查询用户是否存在
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("userAccount", userAccount);
+        queryWrapper.eq("userPassword", encryptPassword);
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            log.info("user login failed, userAccount or userPassword cannot match");
+            return null;
+        }
+        return user;
     }
 }
 
