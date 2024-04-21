@@ -1,5 +1,4 @@
 package com.baiye959.usercenter.service.impl;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,6 +16,8 @@ import org.springframework.util.DigestUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.baiye959.usercenter.contant.UserContant.USER_LOGIN_STATE;
+
 /**
 * @author 33835
 * @description 针对表【user(用户)】的数据库操作Service实现
@@ -33,10 +34,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      * 盐值，混淆密码
      */
     private static final String SALT = "baiye959";
-    /**
-     * 用户登录态键
-     */
-    private static final String USER_LOGIN_STATE = "userLoginState";
+
     @Override
     public Long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -74,8 +72,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 3. 插入
         User user = new User();
-        user.setUseraccount(userAccount);
-        user.setUserpassword(encryptPassword);
+        user.setUserAccount(userAccount);
+        user.setUserPassword(encryptPassword);
         boolean saveResult = this.save(user);
         if (!saveResult) {
             return -1L;
@@ -117,21 +115,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         // 3. 用户脱敏
-        User safetyUser = new User();
-        safetyUser.setId(user.getId());
-        safetyUser.setUsername(user.getUsername());
-        safetyUser.setUseraccount(user.getUseraccount());
-        safetyUser.setAvatarurl(user.getAvatarurl());
-        safetyUser.setGender(user.getGender());
-        safetyUser.setPhone(user.getPhone());
-        safetyUser.setEmail(user.getEmail());
-        safetyUser.setUserstatus(user.getUserstatus());
-        safetyUser.setCreatetime(user.getCreatetime());
+        User safetyUser = getSafetyUser(user);
 
         // 4. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, safetyUser);
 
         // 5. 返回脱敏后的用户信息
+        return safetyUser;
+    }
+
+    /**
+     * 用户脱敏
+     *
+     * @param originUser
+     * @return
+     */
+    @Override
+    public User getSafetyUser(User originUser) {
+        User safetyUser = new User();
+        safetyUser.setId(originUser.getId());
+        safetyUser.setUsername(originUser.getUsername());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setGender(originUser.getGender());
+        safetyUser.setPhone(originUser.getPhone());
+        safetyUser.setEmail(originUser.getEmail());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setUserAccount(originUser.getUserAccount());
+        safetyUser.setUserRole(originUser.getUserRole());
         return safetyUser;
     }
 }

@@ -7,14 +7,14 @@ spring:
     url: jdbc:mysql://localhost:3306/user_center
     username: root
     password: Baiye959
-
+  # session失效时间
+  session:
+    timeout: 86400
 # MyBatis Plus 的配置
 mybatis-plus:
-  # mybatis 配置文件的路径
-  # config-location: "classpath:mybatis/mybatis.config"
-  # mapper 映射文件的路径，可以有多个
-  mapper-locations:
-    - "classpath*:mappers/**/*.xml"
+#  # mapper 映射文件的路径，可以有多个
+#  mapper-locations:
+#    - "classpath*:mappers/**/*.xml"
   configuration:
     map-underscore-to-camel-case: false
   global-config:
