@@ -38,35 +38,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String USER_LOGIN_STATE = "userLoginState";
     @Override
-    public long userRegister(String userAccount, String userPassword, String checkPassword) {
+    public Long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
         // 均不为空
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return -1;
+            return -1L;
         }
         // 长度校验
         if (userAccount.length() < 4) {
-            return -1;
+            return -1L;
         }
         if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            return -1;
+            return -1L;
         }
         // 账户不能包含特殊字符
         String validPattern = "\\pP|\\pS|\\s+";
         Matcher matcher = Pattern.compile(validPattern).matcher(userAccount);
         if (matcher.find()) {
-            return -1;
+            return -1L;
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
-            return -1;
+            return -1L;
         }
         // 账户不重复
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userAccount", userAccount);
         long count = userMapper.selectCount(queryWrapper);
         if (count > 0) {
-            return -1;
+            return -1L;
         }
 
         // 2. 加密
@@ -78,13 +78,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setUserpassword(encryptPassword);
         boolean saveResult = this.save(user);
         if (!saveResult) {
-            return -1;
+            return -1L;
         }
         return user.getId();
     }
 
     @Override
-    public User doLogin(String userAccount, String userPassword, HttpServletRequest request) {
+    public User userLogin(String userAccount, String userPassword, HttpServletRequest request) {
         // 1. 校验
         // 均不为空
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {

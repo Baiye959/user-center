@@ -21,7 +21,7 @@ class UserServiceTest {
     @Resource
     private UserService userService;
     @Test
-    public void testAddUser() {
+    void testAddUser() {
         User user = new User();
         user.setUsername("Baiye959");
         user.setUseraccount("959");
