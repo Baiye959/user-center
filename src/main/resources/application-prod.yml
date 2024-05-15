@@ -2,7 +2,7 @@ spring:
   # DataSource Config
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/user_center
+    url: 'jdbc mysql://sh-cynosdbmysql-grp-98pxrcoqsql:tencentcdb:com:29164/user-center?usessL=false'
     username: username
     password: password
   # session失效时间
