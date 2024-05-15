@@ -9,10 +9,8 @@ springboot官网/IDEA生成初始代码
 
 [Maven Repository: Search/Browse/Explore (mvnrepository.com)](https://mvnrepository.com/ "Maven Repository: Search/Browse/Explore (mvnrepository.com)")
 
-::: tip 此处报错与依赖版本有关，以后添加依赖先去mvn repository查一下！
+此处报错与依赖版本有关，以后添加依赖先去mvn repository查一下！<br/>
 报错时mybatis-plus-spring-boot3-starter用的是3.5.4版本，换成最多人用的3.5.5就正常运行了
-![](/image/image_Oozv6Ek8gz.png)
-:::
 
 整理目录结构
 
@@ -103,10 +101,6 @@ GenerateAllSetter插件，自动生成所有get方法
 
 #### 单元测试
 debug（F7进入函数/循环的下一步，F8下一步，F9下一个断点）
-![](/image/image_M5ALcpJgKQ.png)
-
-此处发现是正则表达式匹配的使用不正确
-![](/image/image_xApVrsqdA6.png)
 
 ### 用户登录（单机登录）
 #### 登录逻辑
@@ -157,10 +151,6 @@ service层是对业务逻辑的校验（有可能被controller之外的类调用
 #### 测试
 IDEA自带的，"Tools"-"HTTP Client"-"Create Request in HTTP Client"
 
-![](/image/image_XB0yOYZj2f.png)
-![](/image/image_HWPiiymzkU.png)
-![](/image/image_EJfVWNUJu0.png)
-
 #### 用户管理接口（鉴权）
 在user表中加一个userRole（角色）字段
 - 查询用户
@@ -174,10 +164,7 @@ IDEA自带的，"Tools"-"HTTP Client"-"Create Request in HTTP Client"
 
 ### 代理
 - 正向代理：替客户端向服务器发送请求
-  ![](/image/image_bZPzEM0Klu.png)
 - 反向代理：替服务器接收请求。（有多台服务器分担压力，代理服务器转发请求）
-  ![](/image/image_vL6eK6TfCf.png)
-
 
 前端使用代理，带/api的路径会自动转到localhost:8080，后端接口要加个/api
 
